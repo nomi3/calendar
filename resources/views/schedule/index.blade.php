@@ -1,40 +1,86 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meeting Schedule</title>
+    <title>Calendar UI</title>
     <style>
+        h2 {
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 32.69px;
+            text-align: left;
+            color: #424242;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #424242;
+            font-family: Noto Sans;
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 32.69px;
+            text-align: left;
+        }
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
         .meeting {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            background-color: #49B5A9;
+            color: #fff;
+            font-family: Noto Sans;
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 32.69px;
+            text-align: left;
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        @isset($error)
-            <p>{{ $error }}</p>
-        @else
-            <h1>営業時間</h1>
-            <p>開始時間: {{ $data['working_hours']['start'] }}</p>
-            <p>終了時間: {{ $data['working_hours']['end'] }}</p>
+@php
+    function getWeekday($date) {
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $timestamp = strtotime($date);
+        return $weekdays[date('w', $timestamp)];
+    }
 
-            <h1>ミーティングスケジュール</h1>
-            @foreach ($data['meetings'] as $date => $meetings)
-                <h2>{{ $date }}</h2>
-                @foreach ($meetings as $meeting)
-                    <div class="meeting">
-                        <p>概要: {{ $meeting['summary'] }}</p>
-                        <p>開始時間: {{ $meeting['start'] }}</p>
-                        <p>終了時間: {{ $meeting['end'] }}</p>
-                        <p>タイムゾーン: {{ $meeting['timezone'] }}</p>
-                    </div>
-                @endforeach
+    $dates = array_keys($data['meetings']);
+@endphp
+<h2>カレンダーUI</h2>
+@isset($error)
+<p>{{ $error }}</p>
+@else
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            @foreach($dates as $date)
+                <th>{{ date('n/j', strtotime($date)) }} ({{ getWeekday($date) }})</th>
             @endforeach
-        @endisset
-    </div>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(range(strtotime($data['working_hours']['start']), strtotime($data['working_hours']['end']), 3600) as $hour)
+            <tr>
+                <td>{{ date('H:i', $hour) }}</td>
+                @foreach($dates as $date)
+                    <td>
+                        @foreach($data['meetings'][$date] ?? [] as $meeting)
+                            @if(strtotime($meeting['start']) == $hour)
+                                <div class="meeting">
+                                    {{ $meeting['summary'] }}
+                                </div>
+                            @endif
+                        @endforeach
+                    </td>
+                @endforeach
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+@endisset
 </body>
 </html>
