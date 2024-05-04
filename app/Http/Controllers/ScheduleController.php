@@ -10,7 +10,10 @@ class ScheduleController extends Controller
 {
     public function index()
     {
-        $response = Http::get('https://mixtend.github.io/schedule.json');
+        $response = Http::withHeaders([
+            'User-Agent' => 'Mixtend Coding Test',
+            'Accept' => 'application/json'
+        ])->get('https://mixtend.github.io/schedule.json');
 
         if ($response->successful()) {
             $data = $response->json();
