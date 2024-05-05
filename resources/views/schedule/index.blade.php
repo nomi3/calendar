@@ -18,7 +18,7 @@
             width: 100%;
             border-collapse: collapse;
             color: #424242;
-            font-family: Noto Sans;
+            font-family: 'Noto Sans', sans-serif;
             font-size: 24px;
             font-weight: 400;
             line-height: 32.69px;
@@ -26,18 +26,10 @@
         }
         td, th {
             border: 1px solid #ddd;
-            padding: 0px;
+            padding: 8px;
             text-align: center;
             height: 32px;
-        }
-        .meeting {
-            background-color: #49B5A9;
-            color: #fff;
-            font-family: Noto Sans;
-            font-size: 24px;
             font-weight: 400;
-            line-height: 32.69px;
-            text-align: left;
         }
 
         .start-hour {
@@ -47,9 +39,10 @@
             border-top: none;
         }
 
-        .meeting-exist {
+        .meeting {
             background-color: #49B5A9;
             color: #fff;
+            text-align: left;
         }
     </style>
 </head>
@@ -108,13 +101,11 @@
                         }
                     @endphp
                     @if ($flag_meeting_start)
-                        <td class="meeting-exist {{$class_name}}">
-                            <div class="meeting">
-                                {{ $meeting['summary'] }}
-                            </div>
+                        <td class="meeting {{$class_name}}">
+                            {{ $meeting['summary'] }}
                         </td>
                     @elseif ($flag_meeting_end)
-                        <td class="meeting-exist {{$class_name}}"></td>
+                        <td class="meeting {{$class_name}}"></td>
                     @else
                         <td class="{{$class_name}}"></td>
                     @endif
