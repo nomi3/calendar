@@ -26,8 +26,9 @@
         }
         td, th {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 0px;
             text-align: center;
+            height: 32px;
         }
         .meeting {
             background-color: #49B5A9;
@@ -37,6 +38,13 @@
             font-weight: 400;
             line-height: 32.69px;
             text-align: left;
+        }
+
+        .start-hour {
+            border-bottom: none;
+        }
+        .half-hour {
+            border-top: none;
         }
     </style>
 </head>
@@ -64,15 +72,30 @@
         </tr>
     </thead>
     <tbody>
-        @foreach(range(strtotime($data['working_hours']['start']), strtotime($data['working_hours']['end']), 3600) as $hour)
+        @foreach(range(strtotime($data['working_hours']['start']), strtotime($data['working_hours']['end']), 1800) as $index => $half_hour)
             <tr>
-                <td>{{ date('H:i', $hour) }}</td>
+                @if($index % 2 == 0)
+                    <td class="start-hour">{{ date('H:i', $half_hour) }}</td>
+                @else
+                    <td class="half-hour"></td>
+                @endif
                 @foreach($dates as $date)
-                    <td>
+                    @if($index % 2 == 0)
+                        <td class="start-hour">
+                    @else
+                        <td class="half-hour">
+                    @endif
                         @foreach($data['meetings'][$date] ?? [] as $meeting)
-                            @if(strtotime($meeting['start']) == $hour)
+                            @php
+                                $meeting_start = strtotime($meeting['start']);
+                                $meeting_end = strtotime($meeting['end']);
+                            @endphp
+                            @if ($meeting_start == $half_hour)
                                 <div class="meeting">
                                     {{ $meeting['summary'] }}
+                                </div>
+                            @elseif ($meeting_end == $half_hour + 1800)
+                                <div class="meeting">
                                 </div>
                             @endif
                         @endforeach
