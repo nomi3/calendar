@@ -32,10 +32,10 @@
             font-weight: 400;
         }
 
-        .start-hour {
+        .border-bottom-none {
             border-bottom: none;
         }
-        .half-hour {
+        .border-top-none {
             border-top: none;
         }
 
@@ -73,16 +73,16 @@
         @foreach(range(strtotime($data['working_hours']['start']), strtotime($data['working_hours']['end'])+1800, 1800) as $index => $half_hour)
             <tr>
                 @if($index % 2 == 0)
-                    <td class="start-hour">{{ date('H:i', $half_hour) }}</td>
+                    <td class="border-bottom-none">{{ date('H:i', $half_hour) }}</td>
                 @else
-                    <td class="half-hour"></td>
+                    <td class="border-top-none"></td>
                 @endif
                 @foreach($dates as $date)
                     @php
                         $flag_meeting_start = false;
                         $flag_meeting_end = false;
                         $meeting_summary = '';
-                        $class_name = $index % 2 == 0 ? 'start-hour' : 'half-hour';
+                        $class_name = $index % 2 == 0 ? 'border-bottom-none' : 'border-top-none';
                         foreach($data['meetings'][$date] ?? [] as $meeting) {
                             $meeting_start = strtotime($meeting['start']);
                             $meeting_end = strtotime($meeting['end']);
@@ -93,10 +93,10 @@
                                 $flag_meeting_end = true;
                             }
                             if ($index % 2 == 1 && $flag_meeting_start && !$flag_meeting_end) {
-                                $class_name = 'start-hour';
+                                $class_name = 'border-bottom-none';
                             }
                             if ($index % 2 == 0 && !$flag_meeting_start && $flag_meeting_end) {
-                                $class_name = 'half-hour';
+                                $class_name = 'border-top-none';
                             }
                         }
                     @endphp
