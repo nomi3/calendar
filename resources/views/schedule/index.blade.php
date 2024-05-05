@@ -88,6 +88,7 @@
                             $meeting_end = strtotime($meeting['end']);
                             if ($meeting_start == $half_hour) {
                                 $flag_meeting_start = true;
+                                $meeting_summary = $meeting['summary'];
                             }
                             if ($meeting_end == $half_hour + 1800) {
                                 $flag_meeting_end = true;
@@ -102,7 +103,7 @@
                     @endphp
                     @if ($flag_meeting_start)
                         <td class="meeting {{$class_name}}">
-                            {{ $meeting['summary'] }}
+                            {{ $meeting_summary }}
                         </td>
                     @elseif ($flag_meeting_end)
                         <td class="meeting {{$class_name}}"></td>
