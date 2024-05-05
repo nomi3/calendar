@@ -77,7 +77,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach(range(strtotime($data['working_hours']['start']), strtotime($data['working_hours']['end']), 1800) as $index => $half_hour)
+        @foreach(range(strtotime($data['working_hours']['start']), strtotime($data['working_hours']['end'])+1800, 1800) as $index => $half_hour)
             <tr>
                 @if($index % 2 == 0)
                     <td class="start-hour">{{ date('H:i', $half_hour) }}</td>
