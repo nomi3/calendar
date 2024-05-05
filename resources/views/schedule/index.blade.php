@@ -46,6 +46,11 @@
         .half-hour {
             border-top: none;
         }
+
+        .meeting-exist {
+            background-color: #49B5A9;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -80,27 +85,39 @@
                     <td class="half-hour"></td>
                 @endif
                 @foreach($dates as $date)
-                    @if($index % 2 == 0)
-                        <td class="start-hour">
+                    @php
+                        $flag_meeting_start = false;
+                        $flag_meeting_end = false;
+                        $meeting_summary = '';
+                        $class_name = $index % 2 == 0 ? 'start-hour' : 'half-hour';
+                        foreach($data['meetings'][$date] ?? [] as $meeting) {
+                            $meeting_start = strtotime($meeting['start']);
+                            $meeting_end = strtotime($meeting['end']);
+                            if ($meeting_start == $half_hour) {
+                                $flag_meeting_start = true;
+                            }
+                            if ($meeting_end == $half_hour + 1800) {
+                                $flag_meeting_end = true;
+                            }
+                            if ($index % 2 == 1 && $flag_meeting_start && !$flag_meeting_end) {
+                                $class_name = 'start-hour';
+                            }
+                            if ($index % 2 == 0 && !$flag_meeting_start && $flag_meeting_end) {
+                                $class_name = 'half-hour';
+                            }
+                        }
+                    @endphp
+                    @if ($flag_meeting_start)
+                        <td class="meeting-exist {{$class_name}}">
+                            <div class="meeting">
+                                {{ $meeting['summary'] }}
+                            </div>
+                        </td>
+                    @elseif ($flag_meeting_end)
+                        <td class="meeting-exist {{$class_name}}"></td>
                     @else
-                        <td class="half-hour">
+                        <td class="{{$class_name}}"></td>
                     @endif
-                        @foreach($data['meetings'][$date] ?? [] as $meeting)
-                            @php
-                                $meeting_start = strtotime($meeting['start']);
-                                $meeting_end = strtotime($meeting['end']);
-                            @endphp
-                            @if ($meeting_start == $half_hour)
-                                <div class="meeting">
-                                    {{ $meeting['summary'] }}
-                                </div>
-                            @elseif ($meeting_end == $half_hour + 1800)
-                                <div class="meeting">
-                                    &ZeroWidthSpace;
-                                </div>
-                            @endif
-                        @endforeach
-                    </td>
                 @endforeach
             </tr>
         @endforeach
