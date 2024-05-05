@@ -96,6 +96,7 @@
                                 </div>
                             @elseif ($meeting_end == $half_hour + 1800)
                                 <div class="meeting">
+                                    &ZeroWidthSpace;
                                 </div>
                             @endif
                         @endforeach
